@@ -9,6 +9,7 @@ type Option implements Node {
   id: ID!
   name: String!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  poll(where: PollWhereInput): Poll!
 }
 
 type Poll implements Node {
@@ -107,10 +108,11 @@ type OptionConnection {
 input OptionCreateInput {
   name: String!
   votes: VoteCreateManyWithoutOptionInput
+  poll: PollCreateOneWithoutOptionsInput!
 }
 
-input OptionCreateManyInput {
-  create: [OptionCreateInput!]
+input OptionCreateManyWithoutPollInput {
+  create: [OptionCreateWithoutPollInput!]
   connect: [OptionWhereUniqueInput!]
 }
 
@@ -119,8 +121,14 @@ input OptionCreateOneWithoutVotesInput {
   connect: OptionWhereUniqueInput
 }
 
+input OptionCreateWithoutPollInput {
+  name: String!
+  votes: VoteCreateManyWithoutOptionInput
+}
+
 input OptionCreateWithoutVotesInput {
   name: String!
+  poll: PollCreateOneWithoutOptionsInput!
 }
 
 """
@@ -188,23 +196,19 @@ input OptionSubscriptionWhereInput {
   node: OptionWhereInput
 }
 
-input OptionUpdateDataInput {
-  name: String
-  votes: VoteUpdateManyWithoutOptionInput
-}
-
 input OptionUpdateInput {
   name: String
   votes: VoteUpdateManyWithoutOptionInput
+  poll: PollUpdateOneWithoutOptionsInput
 }
 
-input OptionUpdateManyInput {
-  create: [OptionCreateInput!]
+input OptionUpdateManyWithoutPollInput {
+  create: [OptionCreateWithoutPollInput!]
   connect: [OptionWhereUniqueInput!]
   disconnect: [OptionWhereUniqueInput!]
   delete: [OptionWhereUniqueInput!]
-  update: [OptionUpdateWithWhereUniqueNestedInput!]
-  upsert: [OptionUpsertWithWhereUniqueNestedInput!]
+  update: [OptionUpdateWithWhereUniqueWithoutPollInput!]
+  upsert: [OptionUpsertWithWhereUniqueWithoutPollInput!]
 }
 
 input OptionUpdateOneWithoutVotesInput {
@@ -215,13 +219,19 @@ input OptionUpdateOneWithoutVotesInput {
   upsert: OptionUpsertWithoutVotesInput
 }
 
-input OptionUpdateWithoutVotesDataInput {
+input OptionUpdateWithoutPollDataInput {
   name: String
+  votes: VoteUpdateManyWithoutOptionInput
 }
 
-input OptionUpdateWithWhereUniqueNestedInput {
+input OptionUpdateWithoutVotesDataInput {
+  name: String
+  poll: PollUpdateOneWithoutOptionsInput
+}
+
+input OptionUpdateWithWhereUniqueWithoutPollInput {
   where: OptionWhereUniqueInput!
-  data: OptionUpdateDataInput!
+  data: OptionUpdateWithoutPollDataInput!
 }
 
 input OptionUpsertWithoutVotesInput {
@@ -229,10 +239,10 @@ input OptionUpsertWithoutVotesInput {
   create: OptionCreateWithoutVotesInput!
 }
 
-input OptionUpsertWithWhereUniqueNestedInput {
+input OptionUpsertWithWhereUniqueWithoutPollInput {
   where: OptionWhereUniqueInput!
-  update: OptionUpdateDataInput!
-  create: OptionCreateInput!
+  update: OptionUpdateWithoutPollDataInput!
+  create: OptionCreateWithoutPollInput!
 }
 
 input OptionWhereInput {
@@ -353,6 +363,7 @@ input OptionWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  poll: PollWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -398,7 +409,16 @@ type PollConnection {
 
 input PollCreateInput {
   name: String!
-  options: OptionCreateManyInput
+  options: OptionCreateManyWithoutPollInput
+}
+
+input PollCreateOneWithoutOptionsInput {
+  create: PollCreateWithoutOptionsInput
+  connect: PollWhereUniqueInput
+}
+
+input PollCreateWithoutOptionsInput {
+  name: String!
 }
 
 """
@@ -468,7 +488,24 @@ input PollSubscriptionWhereInput {
 
 input PollUpdateInput {
   name: String
-  options: OptionUpdateManyInput
+  options: OptionUpdateManyWithoutPollInput
+}
+
+input PollUpdateOneWithoutOptionsInput {
+  create: PollCreateWithoutOptionsInput
+  connect: PollWhereUniqueInput
+  delete: Boolean
+  update: PollUpdateWithoutOptionsDataInput
+  upsert: PollUpsertWithoutOptionsInput
+}
+
+input PollUpdateWithoutOptionsDataInput {
+  name: String
+}
+
+input PollUpsertWithoutOptionsInput {
+  update: PollUpdateWithoutOptionsDataInput!
+  create: PollCreateWithoutOptionsInput!
 }
 
 input PollWhereInput {

@@ -1,8 +1,13 @@
-function post(parent, args, context, info) {
-  const { name } = args
-  return context.db.mutation.createPoll({ data: { name } }, info)
-}
+function postPoll(parent, args, context, info) {
+  const { name, options } = args
+  return context.db.mutation.createPoll(
+    { data: { name,
+      options: {
+        create: options
+      }
+     } }, info)
+  }
 
 module.exports = {
-  post
+  postPoll
 }

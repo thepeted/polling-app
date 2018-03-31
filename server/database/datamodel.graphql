@@ -8,6 +8,7 @@ type Option {
   id: ID! @unique
   name: String!
   votes: [Vote!]!
+  poll: Poll!
 }
 
 type Vote {

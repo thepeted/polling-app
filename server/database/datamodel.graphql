@@ -1,0 +1,16 @@
+type Poll {
+  id: ID! @unique
+  name: String!
+  options: [Option!]!
+}
+
+type Option {
+  id: ID! @unique
+  name: String!
+  votes: [Vote!]!
+}
+
+type Vote {
+  id: ID! @unique
+  option: Option!
+}

@@ -1,4 +1,4 @@
-# import Poll from "./generated/prisma.graphql"
+# import Poll, Option, Vote from "./generated/prisma.graphql"
 
 input OptionInput {
   name: String!
@@ -10,5 +10,6 @@ type Query {
 
 type Mutation {
   postPoll(name: String!, options: [OptionInput!]!): Poll!
+  vote(pollId: String!): Vote!
 }
 

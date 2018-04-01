@@ -11,5 +11,17 @@ type Query {
 type Mutation {
   postPoll(name: String!, options: [OptionInput!]!): Poll!
   vote(pollId: String!): Vote!
+  signup(email: String!, name: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload
 }
 
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  }

@@ -16,6 +16,15 @@ type Poll implements Node {
   id: ID!
   name: String!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option!]
+  postedBy(where: UserWhereInput): User
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  polls(where: PollWhereInput, orderBy: PollOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Poll!]
 }
 
 type Vote implements Node {
@@ -33,6 +42,10 @@ type AggregateOption {
 }
 
 type AggregatePoll {
+  count: Int!
+}
+
+type AggregateUser {
   count: Int!
 }
 
@@ -54,21 +67,27 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createUser(data: UserCreateInput!): User!
   createPoll(data: PollCreateInput!): Poll!
   createOption(data: OptionCreateInput!): Option!
   createVote(data: VoteCreateInput!): Vote!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updatePoll(data: PollUpdateInput!, where: PollWhereUniqueInput!): Poll
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
+  deleteUser(where: UserWhereUniqueInput!): User
   deletePoll(where: PollWhereUniqueInput!): Poll
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteVote(where: VoteWhereUniqueInput!): Vote
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertPoll(where: PollWhereUniqueInput!, create: PollCreateInput!, update: PollUpdateInput!): Poll!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   updateManyPolls(data: PollUpdateInput!, where: PollWhereInput!): BatchPayload!
   updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput!): BatchPayload!
   updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput!): BatchPayload!
+  deleteManyUsers(where: UserWhereInput!): BatchPayload!
   deleteManyPolls(where: PollWhereInput!): BatchPayload!
   deleteManyOptions(where: OptionWhereInput!): BatchPayload!
   deleteManyVotes(where: VoteWhereInput!): BatchPayload!
@@ -410,6 +429,12 @@ type PollConnection {
 input PollCreateInput {
   name: String!
   options: OptionCreateManyWithoutPollInput
+  postedBy: UserCreateOneWithoutPollsInput
+}
+
+input PollCreateManyWithoutPostedByInput {
+  create: [PollCreateWithoutPostedByInput!]
+  connect: [PollWhereUniqueInput!]
 }
 
 input PollCreateOneWithoutOptionsInput {
@@ -419,6 +444,12 @@ input PollCreateOneWithoutOptionsInput {
 
 input PollCreateWithoutOptionsInput {
   name: String!
+  postedBy: UserCreateOneWithoutPollsInput
+}
+
+input PollCreateWithoutPostedByInput {
+  name: String!
+  options: OptionCreateManyWithoutPollInput
 }
 
 """
@@ -489,6 +520,16 @@ input PollSubscriptionWhereInput {
 input PollUpdateInput {
   name: String
   options: OptionUpdateManyWithoutPollInput
+  postedBy: UserUpdateOneWithoutPollsInput
+}
+
+input PollUpdateManyWithoutPostedByInput {
+  create: [PollCreateWithoutPostedByInput!]
+  connect: [PollWhereUniqueInput!]
+  disconnect: [PollWhereUniqueInput!]
+  delete: [PollWhereUniqueInput!]
+  update: [PollUpdateWithWhereUniqueWithoutPostedByInput!]
+  upsert: [PollUpsertWithWhereUniqueWithoutPostedByInput!]
 }
 
 input PollUpdateOneWithoutOptionsInput {
@@ -501,11 +542,28 @@ input PollUpdateOneWithoutOptionsInput {
 
 input PollUpdateWithoutOptionsDataInput {
   name: String
+  postedBy: UserUpdateOneWithoutPollsInput
+}
+
+input PollUpdateWithoutPostedByDataInput {
+  name: String
+  options: OptionUpdateManyWithoutPollInput
+}
+
+input PollUpdateWithWhereUniqueWithoutPostedByInput {
+  where: PollWhereUniqueInput!
+  data: PollUpdateWithoutPostedByDataInput!
 }
 
 input PollUpsertWithoutOptionsInput {
   update: PollUpdateWithoutOptionsDataInput!
   create: PollCreateWithoutOptionsInput!
+}
+
+input PollUpsertWithWhereUniqueWithoutPostedByInput {
+  where: PollWhereUniqueInput!
+  update: PollUpdateWithoutPostedByDataInput!
+  create: PollCreateWithoutPostedByInput!
 }
 
 input PollWhereInput {
@@ -626,6 +684,7 @@ input PollWhereInput {
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
+  postedBy: UserWhereInput
 }
 
 input PollWhereUniqueInput {
@@ -633,12 +692,15 @@ input PollWhereUniqueInput {
 }
 
 type Query {
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   polls(where: PollWhereInput, orderBy: PollOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Poll]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
+  user(where: UserWhereUniqueInput!): User
   poll(where: PollWhereUniqueInput!): Poll
   option(where: OptionWhereUniqueInput!): Option
   vote(where: VoteWhereUniqueInput!): Vote
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   pollsConnection(where: PollWhereInput, orderBy: PollOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PollConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
@@ -652,9 +714,372 @@ type Query {
 }
 
 type Subscription {
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   poll(where: PollSubscriptionWhereInput): PollSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
+}
+
+"""
+A connection to a list of items.
+"""
+type UserConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  name: String!
+  email: String!
+  password: String!
+  polls: PollCreateManyWithoutPostedByInput
+}
+
+input UserCreateOneWithoutPollsInput {
+  create: UserCreateWithoutPollsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutPollsInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+"""
+An edge in a connection.
+"""
+type UserEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: User!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UserSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UserSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+  polls: PollUpdateManyWithoutPostedByInput
+}
+
+input UserUpdateOneWithoutPollsInput {
+  create: UserCreateWithoutPollsInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserUpdateWithoutPollsDataInput
+  upsert: UserUpsertWithoutPollsInput
+}
+
+input UserUpdateWithoutPollsDataInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpsertWithoutPollsInput {
+  update: UserUpdateWithoutPollsDataInput!
+  create: UserCreateWithoutPollsInput!
+}
+
+input UserWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UserWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UserWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  name: String
+  """
+  All values that are not equal to given value.
+  """
+  name_not: String
+  """
+  All values that are contained in given list.
+  """
+  name_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  name_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  name_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  name_lte: String
+  """
+  All values greater than the given value.
+  """
+  name_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  name_gte: String
+  """
+  All values containing the given string.
+  """
+  name_contains: String
+  """
+  All values not containing the given string.
+  """
+  name_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  name_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  name_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  name_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  name_not_ends_with: String
+  email: String
+  """
+  All values that are not equal to given value.
+  """
+  email_not: String
+  """
+  All values that are contained in given list.
+  """
+  email_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  email_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  email_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  email_lte: String
+  """
+  All values greater than the given value.
+  """
+  email_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  email_gte: String
+  """
+  All values containing the given string.
+  """
+  email_contains: String
+  """
+  All values not containing the given string.
+  """
+  email_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  email_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  email_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  email_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  email_not_ends_with: String
+  password: String
+  """
+  All values that are not equal to given value.
+  """
+  password_not: String
+  """
+  All values that are contained in given list.
+  """
+  password_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  password_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  password_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  password_lte: String
+  """
+  All values greater than the given value.
+  """
+  password_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  password_gte: String
+  """
+  All values containing the given string.
+  """
+  password_contains: String
+  """
+  All values not containing the given string.
+  """
+  password_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  password_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  password_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  password_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  password_not_ends_with: String
+  polls_every: PollWhereInput
+  polls_some: PollWhereInput
+  polls_none: PollWhereInput
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  email: String
 }
 
 """

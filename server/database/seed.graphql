@@ -1,0 +1,23 @@
+mutation {
+  first: createPoll(
+    data: {
+      name: "The best editor"
+      options: {
+        create: [{ name: "VSCode" }, { name: "Atom" }, { name: "Sublime" }]
+      }
+    }
+  ) {
+    id
+  }
+
+  second: createPoll(
+    data: {
+      name: "Spaces or Tabs"
+      options: {
+        create: [{ name: "Spaces" }, { name: "Tabs" }]
+      }
+    }
+  ) {
+    id
+  }
+}

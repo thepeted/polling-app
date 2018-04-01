@@ -47,6 +47,25 @@ function postPoll(parent, args, context, info) {
     }, info)
   }
 
+  async function deletePoll(parent, args, context, info) {
+    const { id } = args
+    const userId = getUserId(context)
+
+    const requestingUserIsAuthor = await context.db.exists.Poll({
+      id,
+      postedBy: {
+        id: userId
+      }
+    })
+
+    if (!requestingUserIsAuthor) {
+      throw new Error('Invalid permissions, you must be the creator of a poll to delete it')
+    }
+
+    return context.db.mutation.deletePoll({ where: { id }})
+  }
+
+
   function vote(parent, args, context, info) {
     const { pollId } = args
     return context.db.mutation.createVote({ 
@@ -59,6 +78,7 @@ function postPoll(parent, args, context, info) {
 module.exports = {
   signup,
   postPoll,
+  deletePoll,
   vote,
   login
 }

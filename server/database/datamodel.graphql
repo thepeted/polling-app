@@ -9,18 +9,18 @@ type User {
 type Poll {
   id: ID! @unique
   name: String!
-  options: [Option!]!
+  options: [Option!]! @relation(name: "OptionsOnPoll" onDelete: CASCADE)
   postedBy: User
 }
 
 type Option {
   id: ID! @unique
   name: String!
-  votes: [Vote!]!
-  poll: Poll!
+  votes: [Vote!]! @relation(name: "VotesOnOption" onDelete: CASCADE)
+  poll: Poll!  @relation(name: "OptionsOnPoll")
 }
 
 type Vote {
   id: ID! @unique
-  option: Option!
+  option: Option! @relation(name: "VotesOnOption")
 }

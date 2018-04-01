@@ -1,7 +1,7 @@
 {
   "name": "server",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "nodemon -r dotenv/config src/index.js",
     "dev": "npm-run-all --parallel start playground",
     "playground": "graphql playground",
     "prisma": "prisma"
@@ -17,6 +17,7 @@
     "graphql-cli": "2.15.8",
     "nodemon": "^1.17.3",
     "npm-run-all": "4.1.2",
+    "dotenv": "^5.0.1",
     "prisma": "1.5.1"
   }
 }

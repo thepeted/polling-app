@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId } = require('../utils')
+const { getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
@@ -8,7 +8,7 @@ async function signup(parent, args, context, info) {
     data: { ...args, password }
   })
 
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
 
   return {
     token,
@@ -27,7 +27,7 @@ async function login(parent, args, context, info) {
     throw new Error('Invalid password')
   }
 
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
 
   return {
     token,
@@ -71,7 +71,7 @@ function postPoll(parent, args, context, info) {
     return context.db.mutation.createVote({ 
       data: {
         option: { connect: { id: optionId } }
-      } 
+      }
     }, info)
   }
 

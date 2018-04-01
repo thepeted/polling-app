@@ -67,10 +67,10 @@ function postPoll(parent, args, context, info) {
 
 
   function vote(parent, args, context, info) {
-    const { pollId } = args
+    const { optionId } = args
     return context.db.mutation.createVote({ 
       data: {
-        option: { connect: { id: pollId } }
+        option: { connect: { id: optionId } }
       } 
     }, info)
   }

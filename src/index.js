@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import registerServiceWorker from './registerServiceWorker'
 
 import ApolloClient from 'apollo-boost'
 import { ApolloProvider } from 'react-apollo'
@@ -45,4 +44,3 @@ ReactDOM.render(
   </BrowserRouter>,
   document.getElementById('root')
 )
-registerServiceWorker()

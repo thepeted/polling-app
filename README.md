@@ -16,7 +16,7 @@ If you don't know how to do this, you can do the following.
 
 ```
 mkdir temp-project
-cd temp=project
+cd temp-project
 yarn global add -g prisma
 prisma init // select minimal setup option when this runs
 prisma deploy

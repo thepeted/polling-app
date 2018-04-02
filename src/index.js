@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter } from 'react-router-dom'
 import ApolloClient from 'apollo-boost'
 import { ApolloProvider } from 'react-apollo'
 import './index.css'
@@ -12,12 +13,13 @@ const client = new ApolloClient({
 })
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <div>
-      <h2>Polling App 📊</h2>
-      <App />
-    </div>
-  </ApolloProvider>,
+  <BrowserRouter>
+    <ApolloProvider client={client}>
+      <div>
+        <App />
+      </div>
+    </ApolloProvider>
+  </BrowserRouter>,
   document.getElementById('root')
 )
 registerServiceWorker()

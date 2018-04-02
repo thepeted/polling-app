@@ -20,7 +20,7 @@ node node_modules/prisma/dist/ deploy
 ```
 
 ### 2. Setup Environment Variables
-The easiset way to do this is by creating a `.env` file in the root directory.  The project is configured to inject variables declared in .env to `src/index.js`.
+One way to do this is by creating a .env file in the `server` directory.  The project is configured to expose any variables set in .env to the node application.
 
 You can find your PRISMA_ENDPOINT and PRISMA_CLUSTER values via the output of step 1, or by running `yarn prisma info`
 

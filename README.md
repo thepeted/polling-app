@@ -40,7 +40,7 @@ From the root of this project:
 ```
 npm install -g prisma
 cd server
-prisma start local
+prisma local start
 prisma deploy
 ```
 

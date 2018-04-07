@@ -23,7 +23,7 @@ Docker
 
 ### 2. Setup Environment Variables
 
-You can set these directly, or via a [dotenv](https://github.com/motdotla/dotenv) `.env` file placed in `./server`. Choose your own `PRISMA_SECRET` and `APP_SECRET`
+Choose your own `PRISMA_SECRET` and `APP_SECRET`
 
 ```
 export PRISMA_STAGE=dev
@@ -32,6 +32,8 @@ export PRISMA_ENDPOINT=http://localhost:4466/polling/dev
 export PRISMA_SECRET=anystring
 export APP_SECRET=anystring
 ```
+
+You can also set these via a [`.env`](https://github.com/motdotla/dotenv) file placed in `./server`.
 
 ### 3. Create a Prisma service and database.
 
